@@ -97,9 +97,11 @@ Steps to prepare the experimental environment on the simulator
 ![image](https://github.com/user-attachments/assets/6ca22c8a-d6be-4b4a-b3ea-904a6bb08787)
 
 Here you should put your system link followed by /bas
+
 ![image](https://github.com/user-attachments/assets/47d2ffc4-32f5-4c2c-875c-943f70cebda3)
 
 ![image](https://github.com/user-attachments/assets/44a31ceb-cb27-48aa-9d0e-785c190e4b90)
+
 ![image](https://github.com/user-attachments/assets/45cdd6ad-5e6d-4a18-be5d-fcce7f23acb3)
 
 try payment
