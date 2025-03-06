@@ -18,9 +18,8 @@ class BasService
     protected $clientId;
     protected $clientSecret;
     protected $appId;
-    //protected $merchantKey;
+
     protected $callbackUrl;
-    //private $iv;
     protected $EncryptionService;
     protected $header;
 
@@ -31,7 +30,7 @@ class BasService
     protected $transactionInitiateEndpoint;
 
     protected $notificationsEndpoint;
-
+    protected $environment;
 
     public function __construct(EncryptionService $encryptionService)
     {
@@ -44,6 +43,7 @@ class BasService
         $this->clientSecret = config('bas.client_secret');
         $this->appId = config('bas.app_id');
         $this->callbackUrl = config('bas.callback_uri');
+        $this->environment = config('bas.environment');
         $this->tokenEndpoint = config('bas.token_endpoint');
         $this->userInfoEndpoint = config('bas.user_info_endpoint');
         $this->refundPaymentEndpoint = config('bas.refund_payment_endpoint');
@@ -57,41 +57,13 @@ class BasService
             'x-client-id' => $this->clientId,
             'x-app-id' => $this->appId,
             'x-sdk-version' => InstalledVersions::getPrettyVersion('basgate/laravel-sdk'),
-            'x-environment' => 'dev',
+            'x-environment' => '$this->environment',
             'correlationId' => '',
             'x-sdk-type' => 'Laravel',
         ];
     }
 
 
-//    public function generateFetchAuthCodeJS5(string $clientId = null): string
-//    {
-//        $clientId = $clientId ?: $this->clientId;
-//        return <<<JS
-//            function basFetchAuthCode(){JSBridge.call('basFetchAuthCode', {
-//                    clientId: "{$clientId}"
-//                }).then(function(result) {
-//                    console.log('clientId :', "{$clientId}");
-//                    console.log('basFetchAuthCode result:');
-//                    console.log(JSON.stringify(result));
-//                    if (result && result.data.auth_id) {
-//                        alert(JSON.stringify(result));
-//                        console.log("✅ Received auth_code:", result.data.auth_id);
-//                        return result;
-//
-//                    } else {
-//                        console.error("❌ auth_code not received.");
-//                        return null;
-//                    }
-//                    // Handle the result in your JavaScript code
-//                });
-//            }
-//                window.addEventListener('JSBridgeReady', function(event) {
-//                    console.log('JSBridgeReady fired');
-//                    // basFetchAuthCode();
-//                });
-//            JS;
-//    }
 
     public function generateFetchAuthCodeJS(string $clientId = null): string
     {
@@ -149,61 +121,6 @@ JS;
 
 
 
-    public function generateFetchAuthCodeJS_old(string $clientId = null): string
-    {
-        $clientId = $clientId ?: $this->clientId;
-        return <<<JS
-        async function basFetchAuthCode(){
-            try {
-                const result = await JSBridge.call('basFetchAuthCode', {
-                    clientId: "{$clientId}"
-                });
-                console.log('clientId :', "{$clientId}");
-                console.log('basFetchAuthCode result:',JSON.stringify(result));
-                if (result && result.data.auth_id) {
-                    alert(JSON.stringify(result));
-                    console.log("✅ Received auth_code:", result.data.auth_id);
-                    return result.data.auth_id;
-                } else {
-                    console.error("❌ auth_code not received.");
-                    return null;
-                }
-            } catch (error) {
-                console.error("❌ Error in basFetchAuthCode:", error);
-                return null;
-            }
-        }
-
-        window.addEventListener('JSBridgeReady', function(event) {
-            console.log('JSBridgeReady fired');
-            document.getElementById('authButton').addEventListener('click', async function() {
-                const authCodeResult = await basFetchAuthCode();
-                if (authCodeResult) {
-                    // Send authCodeResult to the server
-                    fetch('get-user-info', {
-                        method: 'POST',
-                        headers: {
-                            'Content-Type': 'application/json',
-                            'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
-                        },
-                        body: JSON.stringify({ authCode: authCodeResult })
-                    })
-                    .then(response => response.text()) // Get the response as text
-                    .then(text => {
-                        console.log('Response text:', text); // Log the response text
-                        return JSON.parse(text); // Parse the text as JSON
-                    })
-                    .then(data => {
-                        console.log('User Info:',JSON.stringify(data) );
-                    })
-                    .catch(error => {
-                        console.error('Error:', error.message);
-                    });
-                }
-            });
-        });
-    JS;
-    }
     public function getUserInfo($authCode)
     {
         $endpoint = $this->userInfoEndpoint;
@@ -234,15 +151,12 @@ JS;
                     "appId": "{$this->appId}"
         }).then(function(result) {
                 console.log('basPayment result:', JSON.stringify(result));
-                // يمكنك إضافة المزيد من كود JavaScript هنا على أسطر جديدة
-                // واستخدام المسافات البادئة لتنظيم الكود JavaScript
+
                 if (result && result.status === 1) {
                       console.log('Seccses Payment:', JSON.stringify(result));
-                    // ... إجراءات النجاح ...
                     return result;
                 } else {
                             console.log('Filed Payment:', JSON.stringify(result));
-                    // ... إجراءات الفشل ...
                     return result;
                 }
             });
@@ -370,22 +284,7 @@ JS;
     /**
      * @throws Exception
      */
-//    private function handleTransactionResponse($response)
-//    {
-//
-//        if ($response['status'] === 1 && $response['code'] === '1111') {
-//            $params = $response['body']['trxToken'] . $response['body']['trxStatus'] . $response['body']['order']['orderId'];
-//            if ($this->EncryptionService->verifySignature($params, $response['head']['signature'])) {
-//                return $response;
-//            }
-//            return 'verifySignature failed';
-//        }
-//        if ($response['status'] === 0) {
-//            return $response;
-//        }
-//
-//        throw new RuntimeException('Transaction failed: ' . $response);
-//    }
+
     private function handleTransactionResponse($response)
     {
         if ($response['status'] === 1 && $response['code'] === '1111') {
@@ -402,25 +301,7 @@ JS;
 
         throw new RuntimeException('Transaction failed: ' . json_encode($response)); // تضمين الاستجابة في رسالة الخطأ
     }
-//    private function callApi1($endpoint, $data, $method = 'POST', $timeout = 30)
-//    {
-//
-//        try {
-//            $response = Http::timeout($timeout) // Set a timeout
-//            ->retry(1, 100) // Retry 3 times with a 100ms delay between attempts
-//            ->withHeaders($this->header)
-//                ->$method($this->baseUrl . $endpoint, $data);
-//
-//            if ($response->successful()) {
-//                return $response->json();
-//            } else {
-//                throw new Exception('API call failed: ' . $response->body());
-//            }
-//        } catch (Exception $e) {
-//            Log::error('Error making API call to ' . $endpoint . ': ' . $e->getMessage());
-//            throw new Exception('An error occurred while communicating with the API: ' . $e->getMessage());
-//        }
-//    }
+
 
 
 

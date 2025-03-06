@@ -8,6 +8,7 @@ return [
     'merchant_key' => env('BAS_MERCHANT_KEY'),
     'iv' => env('BAS_IV', '@@@@&&&&####$$$$'), // **Keep the fixed IV as confirmed**
     'callback_uri' => env('BAS_CALLBACK_URI'),
+    'environment' => env('BAS_ENVIRONMENT', 'staging'),
 
 
     'token_endpoint' => env('BAS_TOKEN_ENDPOINT', '/api/v1/auth/token'),
