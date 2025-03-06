@@ -56,7 +56,7 @@ class BasService
             'Content-Type' => 'application/json',
             'x-client-id' => $this->clientId,
             'x-app-id' => $this->appId,
-            'x-sdk-version' => InstalledVersions::getPrettyVersion('bas/laravel-sdk'),
+            'x-sdk-version' => InstalledVersions::getPrettyVersion('basgate/laravel-sdk'),
             'x-environment' => 'dev',
             'correlationId' => '',
             'x-sdk-type' => 'Laravel',
