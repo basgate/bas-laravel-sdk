@@ -1,5 +1,5 @@
 {
-    "name": "bas/laravel-sdk",
+    "name": "basgate/laravel-sdk",
     "description": "Laravel SDK for BAS Mini Apps Platform",
     "type": "library",
     "license": "MIT",
