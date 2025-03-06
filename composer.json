@@ -1,0 +1,28 @@
+{
+    "name": "bas/laravel-sdk",
+    "description": "Laravel SDK for BAS Mini Apps Platform",
+    "type": "library",
+    "license": "MIT",
+    "autoload": {
+        "psr-4": {
+            "Bas\\LaravelSdk\\": "src/"
+        }
+    },
+    "extra": {
+    "laravel": {
+        "providers": [
+            "Bas\\LaravelSdk\\BasServiceProvider"
+        ],
+        "aliases": {
+            "BAS": "Bas\\LaravelSdk\\Facades\\BasFacade"
+        }
+
+    }
+},
+    "authors": [
+        {
+            "name": "Ahmed Alshikh"
+        }
+    ],
+    "require": {}
+}
